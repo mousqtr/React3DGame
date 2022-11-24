@@ -36,7 +36,6 @@ export default function Box(props) {
   // const [active, setActive] = useState(false)
 
   const handlePointerMove = (e) => {
-    console.log("hover");
     console.log(e.face);
   };
 
@@ -45,7 +44,7 @@ export default function Box(props) {
     <mesh
       {...props}
       ref={mesh}
-      scale={20}
+      scale={1}
       position={props.pos}
       // onClick={(event) => setActive(!active)}
       // onPointerOut={(event) => setHover(false)}
