@@ -1,12 +1,18 @@
 export default function Plane({ color, ...props }) {
   const handlePointerMove = (e) => {
     e.stopPropagation();
-    const newPos = [
+    const [x, y, z] = [
       Math.round(e.point.x),
-      Math.round(e.point.y) + 0.5,
+      Math.round(e.point.y),
       Math.round(e.point.z),
     ];
-    props.moveBox(newPos);
+    const cases = {
+      17: [x, y + 0.5, z],
+      21: [x, y - 0.5, z],
+    };
+    if (cases[e.face.c]) {
+      props.moveBox(cases[e.face.c]);
+    }
   };
 
   const handlePointerOver = (e) => {
@@ -21,9 +27,9 @@ export default function Plane({ color, ...props }) {
 
   return (
     <mesh
-      scale={[11, 11, 0.1]}
+      scale={[11, 11, 0.02]}
       rotation={[-Math.PI / 2, 0, 0]}
-      position={[0, -0.1, 0]}
+      position={[0, -0.001, 0]}
       onPointerMove={handlePointerMove}
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
@@ -32,7 +38,13 @@ export default function Plane({ color, ...props }) {
       {...props}
     >
       <boxBufferGeometry />
-      <meshBasicMaterial attach="material" color="grey" toneMapped={false} />
+      <meshBasicMaterial
+        attach="material"
+        color="black"
+        toneMapped={false}
+        opacity={0.3}
+        transparent
+      />
     </mesh>
   );
 }
