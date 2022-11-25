@@ -11,7 +11,7 @@ export default function Plane({ color, ...props }) {
       21: [x, y - 0.5, z],
     };
     if (cases[e.face.c]) {
-      props.moveBox(cases[e.face.c]);
+      props.setMoveBoxPos(cases[e.face.c]);
     }
   };
 
