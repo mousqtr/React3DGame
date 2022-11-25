@@ -58,7 +58,11 @@ export default function Game() {
       >
         <ambientLight intensity={0.7} />
         <pointLight position={[0, 10, 10]} />
-        <OrbitControls enabled={orbitControlsEnabled} rotateSpeed={2} />
+        <OrbitControls
+          enabled={orbitControlsEnabled}
+          rotateSpeed={2}
+          enableDamping={false}
+        />
         <Suspense fallback={<Loading />}>
           <Plane
             moveBox={handleMoveBox}
