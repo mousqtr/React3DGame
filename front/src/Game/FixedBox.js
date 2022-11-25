@@ -16,7 +16,7 @@ export default function FixedBox(props) {
       21: [x, y, z - 1],
     };
     if (cases[e.face.c]) {
-      props.moveBox(cases[e.face.c]);
+      props.setMoveBoxPos(cases[e.face.c]);
     }
   };
 
