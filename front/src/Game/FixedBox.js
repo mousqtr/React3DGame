@@ -53,7 +53,7 @@ export default function FixedBox({
     >
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color={color} />
-      <Edges scale={1} threshold={30} color={color} />
+      <Edges scale={1} threshold={15} color={color} />
     </mesh>
   );
 }

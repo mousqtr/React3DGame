@@ -23,7 +23,7 @@ export default function Game() {
   const [boxes, setBoxes] = useState([]);
   const [movingBox, setMovingBox] = useState({
     position: [0, 0.5, 0],
-    color: "red",
+    color: "green",
   });
   const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(false);
   const [mode, setMode] = useState("edit");
@@ -45,7 +45,7 @@ export default function Game() {
   };
 
   const handeRemoveBox = (index) => {
-    let boxes_ = boxes.filter((elt) => elt !== index);
+    const boxes_ = boxes.filter((elt, ind) => ind !== index);
     setBoxes(boxes_);
   };
 
@@ -61,9 +61,10 @@ export default function Game() {
         changeMode={setMode}
         setMoveBoxColor={handleMoveBoxColor}
         resetBoxes={handleResetBoxes}
+        setOrbitControlsEnabled={setOrbitControlsEnabled}
       />
       <Canvas
-        style={{ cursor: mode === "move" ? "grab" : "initial" }}
+        style={{ cursor: orbitControlsEnabled ? "grab" : "initial" }}
         camera={{ position: [30, 30, 30], fov: 20 }}
         gl={{ antialias: true }}
         onCreated={({ gl }) => {
@@ -72,6 +73,7 @@ export default function Game() {
       >
         <ambientLight intensity={0.7} />
         <pointLight position={[0, 10, 10]} />
+        <pointLight position={[0, 20, 10]} />
         <OrbitControls
           rotateSpeed={2}
           enableDamping={false}

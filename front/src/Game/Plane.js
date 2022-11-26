@@ -23,12 +23,16 @@ export default function Plane({
 
   const handlePointerOver = (e) => {
     e.stopPropagation();
-    setOrbitControlsEnabled(false);
+    if (mode !== "move") {
+      setOrbitControlsEnabled(false);
+    }
   };
 
   const handlePointerOut = (e) => {
     e.stopPropagation();
-    setOrbitControlsEnabled(true);
+    if (mode !== "move") {
+      setOrbitControlsEnabled(true);
+    }
   };
 
   return (

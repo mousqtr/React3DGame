@@ -6,7 +6,9 @@ export default function MovingBox({ addBox, position, color, mode }) {
 
   const handleClick = (e) => {
     e.stopPropagation();
-    addBox();
+    if (mode === "edit") {
+      addBox();
+    }
   };
 
   if (mode === "edit") {
@@ -23,7 +25,7 @@ export default function MovingBox({ addBox, position, color, mode }) {
         <Edges scale={1.1} threshold={15} color="white" />
       </mesh>
     );
-  } else {
+  } else if (mode === "erase") {
     return (
       <mesh
         ref={mesh}
@@ -38,8 +40,10 @@ export default function MovingBox({ addBox, position, color, mode }) {
           opacity={0}
           transparent={true}
         />
-        <Edges scale={1.1} threshold={15} color="white" />
+        <Edges scale={1.1} threshold={15} color="red" />
       </mesh>
     );
+  } else {
+    return <></>;
   }
 }
