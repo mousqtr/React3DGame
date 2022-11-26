@@ -12,8 +12,8 @@ const colors = [
   "white",
   "#6f4e37",
   "#b5651d",
-  "pink",
-  "orange",
+  "#ff87bb",
+  "#df8100",
   "gold",
   "red",
   "green",
@@ -30,10 +30,12 @@ export default function ControlsPanel({
   setMoveBoxColor,
   resetBoxes,
   movingBoxColor,
+  setOrbitControlsEnabled,
 }) {
   const handleChangeColor = (color) => {
     console.log(color);
     setMoveBoxColor(color);
+    if (mode !== "edit") changeMode("edit");
   };
 
   const handleEdit = () => {
@@ -46,10 +48,12 @@ export default function ControlsPanel({
 
   const handleMove = () => {
     changeMode("move");
+    setOrbitControlsEnabled(true);
   };
 
   const handleReset = () => {
     resetBoxes();
+    changeMode("edit");
   };
 
   return (
