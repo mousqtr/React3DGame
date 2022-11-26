@@ -8,13 +8,13 @@ import "./ControlsPanel.css";
 const colors = [
   "#202020",
   "grey",
-  "lightgrey",
+  "#cbcbcb",
   "white",
   "#6f4e37",
   "#b5651d",
   "pink",
   "orange",
-  "yellow",
+  "gold",
   "red",
   "green",
   "lightgreen",
@@ -29,6 +29,7 @@ export default function ControlsPanel({
   changeMode,
   setMoveBoxColor,
   resetBoxes,
+  movingBoxColor,
 }) {
   const handleChangeColor = (color) => {
     console.log(color);
@@ -57,7 +58,7 @@ export default function ControlsPanel({
         {colors.map((c) => (
           <div
             key={c}
-            className="color"
+            className={movingBoxColor === c ? "selected color" : "color"}
             style={{ backgroundColor: c }}
             onClick={() => handleChangeColor(c)}
           ></div>

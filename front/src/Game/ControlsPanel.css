@@ -36,6 +36,11 @@ svg {
   float: left;
   margin: 2px;
   cursor: pointer;
-  /* background-color: grey; */
   border-radius: 50%;
+}
+
+.selected {
+  width: 27px;
+  height: 27px;
+  border: 1px solid black;
 }
