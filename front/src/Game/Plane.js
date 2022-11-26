@@ -1,28 +1,34 @@
-export default function Plane({ color, ...props }) {
+export default function Plane({
+  mode,
+  setMoveBoxPos,
+  setOrbitControlsEnabled,
+}) {
   const handlePointerMove = (e) => {
     e.stopPropagation();
-    const [x, y, z] = [
-      Math.round(e.point.x),
-      Math.round(e.point.y),
-      Math.round(e.point.z),
-    ];
-    const cases = {
-      17: [x, y + 0.5, z],
-      21: [x, y - 0.5, z],
-    };
-    if (cases[e.face.c]) {
-      props.setMoveBoxPos(cases[e.face.c]);
+    if (mode === "edit") {
+      const [x, y, z] = [
+        Math.round(e.point.x),
+        Math.round(e.point.y),
+        Math.round(e.point.z),
+      ];
+      const cases = {
+        17: [x, y + 0.5, z],
+        21: [x, y - 0.5, z],
+      };
+      if (cases[e.face.c]) {
+        setMoveBoxPos(cases[e.face.c]);
+      }
     }
   };
 
   const handlePointerOver = (e) => {
     e.stopPropagation();
-    props.setOrbitControlsEnabled(false);
+    setOrbitControlsEnabled(false);
   };
 
   const handlePointerOut = (e) => {
     e.stopPropagation();
-    props.setOrbitControlsEnabled(true);
+    setOrbitControlsEnabled(true);
   };
 
   return (
@@ -35,9 +41,8 @@ export default function Plane({ color, ...props }) {
       onPointerOut={handlePointerOut}
       receiveShadow
       castShadow
-      {...props}
     >
-      <boxBufferGeometry />
+      <boxGeometry />
       <meshBasicMaterial
         attach="material"
         color="black"

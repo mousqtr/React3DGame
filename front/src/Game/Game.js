@@ -1,5 +1,4 @@
 // Import modules
-import * as THREE from "three";
 import React, { Suspense, useRef, useEffect, useState } from "react";
 import {
   Canvas,
@@ -45,6 +44,11 @@ export default function Game() {
     setBoxes(boxes_);
   };
 
+  const handeRemoveBox = (index) => {
+    let boxes_ = boxes.filter((elt) => elt !== index);
+    setBoxes(boxes_);
+  };
+
   const handleResetBoxes = () => {
     setBoxes([]);
   };
@@ -53,6 +57,7 @@ export default function Game() {
     <div className="game">
       <ControlsPanel
         mode={mode}
+        movingBoxColor={movingBox.color}
         changeMode={setMode}
         setMoveBoxColor={handleMoveBoxColor}
         resetBoxes={handleResetBoxes}
@@ -76,11 +81,13 @@ export default function Game() {
         />
         <Suspense fallback={<Loading />}>
           <Plane
+            mode={mode}
             setMoveBoxPos={handleMoveBoxPos}
             setOrbitControlsEnabled={setOrbitControlsEnabled}
           />
           <gridHelper args={[11, 11, "grey", "grey"]} />
           <MovingBox
+            mode={mode}
             position={movingBox.position}
             color={movingBox.color}
             addBox={handleAddBox}
@@ -88,9 +95,12 @@ export default function Game() {
           {boxes.map((c, index) => (
             <FixedBox
               key={index}
+              index={index}
               position={c.position}
               color={c.color}
               setMoveBoxPos={handleMoveBoxPos}
+              mode={mode}
+              removeBox={handeRemoveBox}
             />
           ))}
         </Suspense>
