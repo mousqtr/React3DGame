@@ -25,12 +25,16 @@ export default function Game() {
     position: [0, 0.5, 0],
     color: "green",
   });
-  const [orbitControlsEnabled, setOrbitControlsEnabled] = useState(false);
   const [mode, setMode] = useState("edit");
+  const [isOrbitControls, setOrbitControls] = useState(true);
+  const [isDragging, setDragging] = useState(false);
+  const [isObjectDetected, setObjectDetected] = useState(false);
 
   const handleMoveBoxPos = (position) => {
-    const movingBox_ = { ...movingBox, position: position };
-    setMovingBox(movingBox_);
+    if (!isDragging) {
+      const movingBox_ = { ...movingBox, position: position };
+      setMovingBox(movingBox_);
+    }
   };
 
   const handleMoveBoxColor = (color) => {
@@ -61,6 +65,36 @@ export default function Game() {
     setBoxes(boxes_);
   };
 
+  const handlePointerDown = () => {
+    setDragging(true);
+  };
+
+  const handlePointerUp = () => {
+    setDragging(false);
+    if (isOrbitControls && isObjectDetected) {
+      setOrbitControls(false);
+    }
+    if (!isOrbitControls && !isObjectDetected) {
+      setOrbitControls(true);
+    }
+  };
+
+  const handleSetOrbitControls = (enable) => {
+    setOrbitControls(enable);
+  };
+
+  const handleSetObjectDetected = (isDetected) => {
+    setObjectDetected(isDetected);
+    if (!isDragging) {
+      if (isOrbitControls && isDetected) {
+        setOrbitControls(false);
+      }
+      if (!isOrbitControls && !isDetected) {
+        setOrbitControls(true);
+      }
+    }
+  };
+
   return (
     <div className="game">
       <ControlsPanel
@@ -69,11 +103,11 @@ export default function Game() {
         changeMode={setMode}
         setMoveBoxColor={handleMoveBoxColor}
         resetBoxes={handleResetBoxes}
-        setOrbitControlsEnabled={setOrbitControlsEnabled}
+        setOrbitControls={handleSetOrbitControls}
       />
       <Canvas
         style={{
-          cursor: orbitControlsEnabled
+          cursor: isOrbitControls
             ? "grab"
             : mode === "fill"
             ? "crosshair"
@@ -84,6 +118,8 @@ export default function Game() {
         onCreated={({ gl }) => {
           gl.setPixelRatio(window.devicePixelRatio);
         }}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
       >
         <ambientLight intensity={0.7} />
         <pointLight position={[0, 10, 10]} />
@@ -91,7 +127,7 @@ export default function Game() {
         <OrbitControls
           rotateSpeed={2}
           enableDamping={false}
-          enableRotate={orbitControlsEnabled}
+          enableRotate={isOrbitControls}
           enablePan={true}
           enableZooming={true}
         />
@@ -99,7 +135,8 @@ export default function Game() {
           <Plane
             mode={mode}
             setMoveBoxPos={handleMoveBoxPos}
-            setOrbitControlsEnabled={setOrbitControlsEnabled}
+            isObjectDetected={isObjectDetected}
+            setObjectDetected={handleSetObjectDetected}
           />
           <gridHelper args={[11, 11, "grey", "grey"]} />
           <MovingBox
@@ -117,7 +154,8 @@ export default function Game() {
               setMoveBoxPos={handleMoveBoxPos}
               mode={mode}
               removeBox={handeRemoveBox}
-              setOrbitControlsEnabled={setOrbitControlsEnabled}
+              isObjectDetected={isObjectDetected}
+              setObjectDetected={handleSetObjectDetected}
               changeBoxColor={handleChangeBoxColor}
             />
           ))}

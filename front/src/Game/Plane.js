@@ -1,7 +1,8 @@
 export default function Plane({
   mode,
   setMoveBoxPos,
-  setOrbitControlsEnabled,
+  isObjectDetected,
+  setObjectDetected,
 }) {
   const handlePointerMove = (e) => {
     e.stopPropagation();
@@ -23,16 +24,12 @@ export default function Plane({
 
   const handlePointerOver = (e) => {
     e.stopPropagation();
-    if (mode !== "move") {
-      setOrbitControlsEnabled(false);
-    }
+    if (!isObjectDetected) setObjectDetected(true);
   };
 
   const handlePointerOut = (e) => {
     e.stopPropagation();
-    if (mode !== "move") {
-      setOrbitControlsEnabled(true);
-    }
+    if (isObjectDetected) setObjectDetected(false);
   };
 
   return (
