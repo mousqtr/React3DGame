@@ -60,7 +60,7 @@ function EraseBox({ mesh, position, handleClick }) {
         opacity={0}
         transparent={true}
       />
-      <Edges scale={1.1} threshold={15} color="fill" />
+      <Edges scale={1.1} threshold={15} color="red" />
     </mesh>
   );
 }

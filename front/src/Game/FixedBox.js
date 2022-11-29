@@ -8,7 +8,8 @@ export default function FixedBox({
   color,
   setMoveBoxPos,
   removeBox,
-  setOrbitControlsEnabled,
+  isObjectDetected,
+  setObjectDetected,
   changeBoxColor,
 }) {
   const mesh = useRef();
@@ -37,7 +38,7 @@ export default function FixedBox({
       default:
         break;
     }
-    setOrbitControlsEnabled(false);
+    if (!isObjectDetected) setObjectDetected(true);
   };
 
   const handleClick = (e) => {
