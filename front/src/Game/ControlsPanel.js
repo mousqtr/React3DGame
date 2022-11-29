@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
-import { BiTrash } from "react-icons/bi";
+import { BiPencil, BiTrash, BiColorFill } from "react-icons/bi";
 import { TbEraser, TbHandStop } from "react-icons/tb";
-import { BiPencil } from "react-icons/bi";
 import { TfiHandDrag } from "react-icons/tfi";
 import "./ControlsPanel.css";
 
@@ -35,7 +34,7 @@ export default function ControlsPanel({
   const handleChangeColor = (color) => {
     console.log(color);
     setMoveBoxColor(color);
-    if (mode !== "edit") changeMode("edit");
+    if (!["edit", "fill"].includes(mode)) changeMode("edit");
   };
 
   const handleEdit = () => {
@@ -54,6 +53,10 @@ export default function ControlsPanel({
   const handleReset = () => {
     resetBoxes();
     changeMode("edit");
+  };
+
+  const handleFill = () => {
+    changeMode("fill");
   };
 
   return (
@@ -84,6 +87,10 @@ export default function ControlsPanel({
         <BiTrash
           style={{ color: mode === "reset" ? "blue" : "black" }}
           onClick={handleReset}
+        />
+        <BiColorFill
+          style={{ color: mode === "fill" ? "blue" : "black" }}
+          onClick={handleFill}
         />
       </div>
     </div>

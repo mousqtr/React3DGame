@@ -53,6 +53,14 @@ export default function Game() {
     setBoxes([]);
   };
 
+  const handleChangeBoxColor = (index) => {
+    const boxes_ = boxes.map((elt, ind) => {
+      elt = ind === index ? { ...elt, color: movingBox.color } : elt;
+      return elt;
+    });
+    setBoxes(boxes_);
+  };
+
   return (
     <div className="game">
       <ControlsPanel
@@ -64,7 +72,13 @@ export default function Game() {
         setOrbitControlsEnabled={setOrbitControlsEnabled}
       />
       <Canvas
-        style={{ cursor: orbitControlsEnabled ? "grab" : "initial" }}
+        style={{
+          cursor: orbitControlsEnabled
+            ? "grab"
+            : mode === "fill"
+            ? "crosshair"
+            : "initial",
+        }}
         camera={{ position: [30, 30, 30], fov: 20 }}
         gl={{ antialias: true }}
         onCreated={({ gl }) => {
@@ -103,6 +117,8 @@ export default function Game() {
               setMoveBoxPos={handleMoveBoxPos}
               mode={mode}
               removeBox={handeRemoveBox}
+              setOrbitControlsEnabled={setOrbitControlsEnabled}
+              changeBoxColor={handleChangeBoxColor}
             />
           ))}
         </Suspense>
