@@ -8,6 +8,8 @@ export default function FixedBox({
   color,
   setMoveBoxPos,
   removeBox,
+  setOrbitControlsEnabled,
+  changeBoxColor,
 }) {
   const mesh = useRef();
 
@@ -29,17 +31,26 @@ export default function FixedBox({
         }
         break;
       case "erase":
+      case "fill":
         setMoveBoxPos(position);
         break;
       default:
         break;
     }
+    setOrbitControlsEnabled(false);
   };
 
   const handleClick = (e) => {
     e.stopPropagation();
-    if (mode === "erase") {
-      removeBox(index);
+    switch (mode) {
+      case "erase":
+        removeBox(index);
+        break;
+      case "fill":
+        changeBoxColor(index);
+        break;
+      default:
+        break;
     }
   };
 
