@@ -29,7 +29,6 @@ export default function ControlsPanel({
   setMoveBoxColor,
   resetBoxes,
   movingBoxColor,
-  setOrbitControlsEnabled,
 }) {
   const handleChangeColor = (color) => {
     console.log(color);
@@ -47,7 +46,6 @@ export default function ControlsPanel({
 
   const handleMove = () => {
     changeMode("move");
-    setOrbitControlsEnabled(true);
   };
 
   const handleReset = () => {

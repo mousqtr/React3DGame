@@ -1,9 +1,4 @@
-export default function Plane({
-  mode,
-  setMoveBoxPos,
-  isObjectDetected,
-  setObjectDetected,
-}) {
+export default function Plane({ mode, setMoveBoxPos }) {
   const handlePointerMove = (e) => {
     e.stopPropagation();
     if (mode === "edit") {
@@ -22,24 +17,12 @@ export default function Plane({
     }
   };
 
-  const handlePointerOver = (e) => {
-    e.stopPropagation();
-    if (!isObjectDetected) setObjectDetected(true);
-  };
-
-  const handlePointerOut = (e) => {
-    e.stopPropagation();
-    if (isObjectDetected) setObjectDetected(false);
-  };
-
   return (
     <mesh
       scale={[11, 11, 0.02]}
       rotation={[-Math.PI / 2, 0, 0]}
       position={[0, -0.001, 0]}
       onPointerMove={handlePointerMove}
-      onPointerOver={handlePointerOver}
-      onPointerOut={handlePointerOut}
       receiveShadow
       castShadow
     >

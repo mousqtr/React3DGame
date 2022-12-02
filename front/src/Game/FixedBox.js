@@ -8,8 +8,6 @@ export default function FixedBox({
   color,
   setMoveBoxPos,
   removeBox,
-  isObjectDetected,
-  setObjectDetected,
   changeBoxColor,
 }) {
   const mesh = useRef();
@@ -38,7 +36,6 @@ export default function FixedBox({
       default:
         break;
     }
-    if (!isObjectDetected) setObjectDetected(true);
   };
 
   const handleClick = (e) => {

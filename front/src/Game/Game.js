@@ -1,5 +1,6 @@
 // Import modules
 import React, { Suspense, useRef, useEffect, useState } from "react";
+import { MOUSE } from "three";
 import {
   Canvas,
   useLoader,
@@ -26,15 +27,10 @@ export default function Game() {
     color: "green",
   });
   const [mode, setMode] = useState("edit");
-  const [isOrbitControls, setOrbitControls] = useState(true);
-  const [isDragging, setDragging] = useState(false);
-  const [isObjectDetected, setObjectDetected] = useState(false);
 
   const handleMoveBoxPos = (position) => {
-    if (!isDragging) {
-      const movingBox_ = { ...movingBox, position: position };
-      setMovingBox(movingBox_);
-    }
+    const movingBox_ = { ...movingBox, position: position };
+    setMovingBox(movingBox_);
   };
 
   const handleMoveBoxColor = (color) => {
@@ -65,36 +61,6 @@ export default function Game() {
     setBoxes(boxes_);
   };
 
-  const handlePointerDown = () => {
-    setDragging(true);
-  };
-
-  const handlePointerUp = () => {
-    setDragging(false);
-    if (isOrbitControls && isObjectDetected) {
-      setOrbitControls(false);
-    }
-    if (!isOrbitControls && !isObjectDetected) {
-      setOrbitControls(true);
-    }
-  };
-
-  const handleSetOrbitControls = (enable) => {
-    setOrbitControls(enable);
-  };
-
-  const handleSetObjectDetected = (isDetected) => {
-    setObjectDetected(isDetected);
-    if (!isDragging) {
-      if (isOrbitControls && isDetected) {
-        setOrbitControls(false);
-      }
-      if (!isOrbitControls && !isDetected) {
-        setOrbitControls(true);
-      }
-    }
-  };
-
   return (
     <div className="game">
       <ControlsPanel
@@ -103,23 +69,14 @@ export default function Game() {
         changeMode={setMode}
         setMoveBoxColor={handleMoveBoxColor}
         resetBoxes={handleResetBoxes}
-        setOrbitControls={handleSetOrbitControls}
       />
       <Canvas
-        style={{
-          cursor: isOrbitControls
-            ? "grab"
-            : mode === "fill"
-            ? "crosshair"
-            : "initial",
-        }}
+        style={{ cursor: mode === "move" ? "grab" : "initial" }}
         camera={{ position: [30, 30, 30], fov: 20 }}
         gl={{ antialias: true }}
         onCreated={({ gl }) => {
           gl.setPixelRatio(window.devicePixelRatio);
         }}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
       >
         <ambientLight intensity={0.7} />
         <pointLight position={[0, 10, 10]} />
@@ -127,17 +84,17 @@ export default function Game() {
         <OrbitControls
           rotateSpeed={2}
           enableDamping={false}
-          enableRotate={isOrbitControls}
+          enableRotate={true}
           enablePan={true}
           enableZooming={true}
+          mouseButtons={{
+            LEFT: mode === "move" ? MOUSE.ROTATE : null,
+            MIDDLE: MOUSE.PAN,
+            RIGHT: MOUSE.ROTATE,
+          }}
         />
         <Suspense fallback={<Loading />}>
-          <Plane
-            mode={mode}
-            setMoveBoxPos={handleMoveBoxPos}
-            isObjectDetected={isObjectDetected}
-            setObjectDetected={handleSetObjectDetected}
-          />
+          <Plane mode={mode} setMoveBoxPos={handleMoveBoxPos} />
           <gridHelper args={[11, 11, "grey", "grey"]} />
           <MovingBox
             mode={mode}
@@ -154,8 +111,6 @@ export default function Game() {
               setMoveBoxPos={handleMoveBoxPos}
               mode={mode}
               removeBox={handeRemoveBox}
-              isObjectDetected={isObjectDetected}
-              setObjectDetected={handleSetObjectDetected}
               changeBoxColor={handleChangeBoxColor}
             />
           ))}
