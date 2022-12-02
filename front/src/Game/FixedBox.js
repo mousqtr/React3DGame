@@ -40,6 +40,9 @@ export default function FixedBox({
 
   const handleClick = (e) => {
     e.stopPropagation();
+    if (e.button !== 0) {
+      return;
+    }
     switch (mode) {
       case "erase":
         removeBox(index);
