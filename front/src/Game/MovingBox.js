@@ -1,20 +1,35 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Edges, GradientTexture } from "@react-three/drei";
+import { Edges } from "@react-three/drei";
 
-export default function MovingBox({ addBox, position, color, mode }) {
+export default function MovingBox({ addBox, position, color, mode, boxes }) {
   const mesh = useRef();
   const [isClicking, setClicking] = useState(false);
   const [actionAllowed, setActionAllowed] = useState(true);
 
   useEffect(() => {
-    if (isClicking && actionAllowed) {
-      addBox();
-      setActionAllowed(false);
-      setTimeout(() => {
-        setActionAllowed(true);
-      }, 300);
+    if (mode !== "edit") {
+      return;
     }
-  }, [position, isClicking, actionAllowed]);
+
+    if (!isClicking || !actionAllowed) {
+      return;
+    }
+
+    // Check if there is already a box
+    const isBox = boxes.some((box) => {
+      if (JSON.stringify(box.position) === JSON.stringify(position)) {
+        return true;
+      }
+      return false;
+    });
+    if (isBox) return;
+    addBox(position);
+
+    setActionAllowed(false);
+    setTimeout(() => {
+      setActionAllowed(true);
+    }, 300);
+  }, [mode, isClicking, actionAllowed, addBox, position, boxes]);
 
   const handlePointerDown = (e) => {
     e.stopPropagation();
