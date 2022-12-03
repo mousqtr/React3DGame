@@ -1,19 +1,62 @@
-import React, { useRef, useState } from "react";
-import { Edges, GradientTexture } from "@react-three/drei";
+import React, { useRef, useState, useEffect } from "react";
+import { Edges } from "@react-three/drei";
 
 export default function FixedBox({
-  index,
   mode,
   position,
   color,
   setMoveBoxPos,
   removeBox,
   changeBoxColor,
+  isClicking,
+  setClicking,
+  movingBox,
 }) {
   const mesh = useRef();
+  const [actionAllowed, setActionAllowed] = useState(true);
+
+  useEffect(() => {
+    if (!["erase", "fill"].includes(mode)) {
+      return;
+    }
+
+    if (JSON.stringify(position) !== JSON.stringify(movingBox.position)) {
+      return;
+    }
+
+    if (!isClicking || !actionAllowed) {
+      return;
+    }
+
+    // console.log("isClick", position);
+
+    switch (mode) {
+      case "erase":
+        removeBox();
+        break;
+      case "fill":
+        // changeBoxColor();
+        break;
+      default:
+        break;
+    }
+
+    setActionAllowed(false);
+    setTimeout(() => {
+      setActionAllowed(true);
+    }, 300);
+  }, [
+    isClicking,
+    position,
+    mode,
+    actionAllowed,
+    removeBox,
+    movingBox.position,
+  ]); //changeBoxColor
 
   const handlePointerMove = (e) => {
     e.stopPropagation();
+    console.log("handlePointerMove", position);
     switch (mode) {
       case "edit":
         const [x, y, z] = position;
@@ -38,17 +81,11 @@ export default function FixedBox({
     }
   };
 
-  const handleClick = (e) => {
+  const handlePointerDown = (e) => {
+    console.log("down");
     e.stopPropagation();
-    switch (mode) {
-      case "erase":
-        removeBox(index);
-        break;
-      case "fill":
-        changeBoxColor(index);
-        break;
-      default:
-        break;
+    if (["erase", "fill"].includes(mode) && e.button === 0) {
+      setClicking(true);
     }
   };
 
@@ -58,7 +95,7 @@ export default function FixedBox({
       scale={1}
       position={position}
       onPointerMove={handlePointerMove}
-      onClick={handleClick}
+      onPointerDown={handlePointerDown}
     >
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color={color} />

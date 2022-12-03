@@ -1,13 +1,7 @@
 // Import modules
-import React, { Suspense, useRef, useEffect, useState } from "react";
+import React, { Suspense, useState, useCallback } from "react";
 import { MOUSE } from "three";
-import {
-  Canvas,
-  useLoader,
-  extend,
-  useFrame,
-  useThree,
-} from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 
 // Import components
@@ -27,38 +21,73 @@ export default function Game() {
     color: "green",
   });
   const [mode, setMode] = useState("edit");
+  const [isClicking, setClicking] = useState(false);
 
+  /**
+   * Update the moving box position
+   */
   const handleMoveBoxPos = (position) => {
     const movingBox_ = { ...movingBox, position: position };
     setMovingBox(movingBox_);
   };
 
+  /**
+   * Update the moving box color
+   */
   const handleMoveBoxColor = (color) => {
     const movingBox_ = { ...movingBox, color: color };
     setMovingBox(movingBox_);
   };
 
-  const handleAddBox = () => {
+  /**
+   * Add the moving box to boxes list
+   */
+  const handleAddBox = useCallback(() => {
     let boxes_ = [...boxes];
     boxes_.push(movingBox);
     setBoxes(boxes_);
-  };
+  }, [boxes, movingBox]);
 
-  const handeRemoveBox = (index) => {
-    const boxes_ = boxes.filter((elt, ind) => ind !== index);
+  /**
+   * Remove the moving box from boxes list
+   */
+  const handeRemoveBox = useCallback(() => {
+    const boxes_ = boxes.filter(
+      (box) =>
+        JSON.stringify(box.position) !== JSON.stringify(movingBox.position)
+    );
     setBoxes(boxes_);
-  };
+  }, [boxes, movingBox.position]);
 
-  const handleResetBoxes = () => {
+  /**
+   * Clear boxes list
+   */
+  const handleResetBoxes = useCallback(() => {
     setBoxes([]);
-  };
+  }, []);
 
-  const handleChangeBoxColor = (index) => {
-    const boxes_ = boxes.map((elt, ind) => {
-      elt = ind === index ? { ...elt, color: movingBox.color } : elt;
-      return elt;
-    });
-    setBoxes(boxes_);
+  /**
+   * Update the fixed box color
+   */
+  const handleChangeBoxColor = useCallback(
+    (id) => {
+      const boxes_ = boxes.map((box) => {
+        box =
+          JSON.stringify(box.position) === JSON.stringify(movingBox.position)
+            ? { ...box, color: movingBox.color }
+            : box;
+        return box;
+      });
+      setBoxes(boxes_);
+    },
+    [boxes, movingBox]
+  );
+
+  const handlePointerUp = (e) => {
+    console.log("up");
+    if (["erase", "fill"].includes(mode) && e.button === 0) {
+      setClicking(false);
+    }
   };
 
   return (
@@ -77,6 +106,7 @@ export default function Game() {
         onCreated={({ gl }) => {
           gl.setPixelRatio(window.devicePixelRatio);
         }}
+        onPointerUp={handlePointerUp}
       >
         <ambientLight intensity={0.7} />
         <pointLight position={[0, 10, 10]} />
@@ -101,17 +131,21 @@ export default function Game() {
             position={movingBox.position}
             color={movingBox.color}
             addBox={handleAddBox}
+            boxes={boxes}
           />
-          {boxes.map((c, index) => (
+          {boxes.map((box, index) => (
             <FixedBox
               key={index}
-              index={index}
-              position={c.position}
-              color={c.color}
+              boxes={boxes}
+              position={box.position}
+              color={box.color}
               setMoveBoxPos={handleMoveBoxPos}
               mode={mode}
               removeBox={handeRemoveBox}
               changeBoxColor={handleChangeBoxColor}
+              isClicking={isClicking}
+              setClicking={setClicking}
+              movingBox={movingBox}
             />
           ))}
         </Suspense>
