@@ -21,15 +21,17 @@ export default function Game() {
     color: "green",
   });
   const [mode, setMode] = useState("edit");
-  const [isClicking, setClicking] = useState(false);
 
   /**
    * Update the moving box position
    */
-  const handleMoveBoxPos = (position) => {
-    const movingBox_ = { ...movingBox, position: position };
-    setMovingBox(movingBox_);
-  };
+  const handleMoveBoxPos = useCallback(
+    (position) => {
+      const movingBox_ = { ...movingBox, position: position };
+      setMovingBox(movingBox_);
+    },
+    [movingBox]
+  );
 
   /**
    * Update the moving box color
@@ -83,13 +85,6 @@ export default function Game() {
     [boxes, movingBox]
   );
 
-  const handlePointerUp = (e) => {
-    console.log("up");
-    if (["erase", "fill"].includes(mode) && e.button === 0) {
-      setClicking(false);
-    }
-  };
-
   return (
     <div className="game">
       <ControlsPanel
@@ -106,13 +101,12 @@ export default function Game() {
         onCreated={({ gl }) => {
           gl.setPixelRatio(window.devicePixelRatio);
         }}
-        onPointerUp={handlePointerUp}
       >
         <ambientLight intensity={0.7} />
         <pointLight position={[0, 10, 10]} />
         <pointLight position={[0, 20, 10]} />
         <OrbitControls
-          rotateSpeed={2}
+          rotateSpeed={1}
           enableDamping={false}
           enableRotate={true}
           enablePan={true}
@@ -131,21 +125,16 @@ export default function Game() {
             position={movingBox.position}
             color={movingBox.color}
             addBox={handleAddBox}
-            boxes={boxes}
           />
           {boxes.map((box, index) => (
             <FixedBox
               key={index}
-              boxes={boxes}
+              mode={mode}
               position={box.position}
               color={box.color}
               setMoveBoxPos={handleMoveBoxPos}
-              mode={mode}
               removeBox={handeRemoveBox}
               changeBoxColor={handleChangeBoxColor}
-              isClicking={isClicking}
-              setClicking={setClicking}
-              movingBox={movingBox}
             />
           ))}
         </Suspense>

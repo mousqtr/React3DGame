@@ -1,7 +1,7 @@
 export default function Plane({ mode, setMoveBoxPos }) {
   const handlePointerMove = (e) => {
     e.stopPropagation();
-    if (mode === "edit") {
+    if (mode === "edit" || mode === "erase") {
       const [x, y, z] = [
         Math.round(e.point.x),
         Math.round(e.point.y),
