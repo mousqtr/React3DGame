@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef } from "react";
 import { Edges } from "@react-three/drei";
 
 export default function FixedBox({
@@ -8,55 +8,12 @@ export default function FixedBox({
   setMoveBoxPos,
   removeBox,
   changeBoxColor,
-  isClicking,
-  setClicking,
-  movingBox,
 }) {
   const mesh = useRef();
-  const [actionAllowed, setActionAllowed] = useState(true);
 
-  useEffect(() => {
-    if (!["erase", "fill"].includes(mode)) {
-      return;
-    }
-
-    if (JSON.stringify(position) !== JSON.stringify(movingBox.position)) {
-      return;
-    }
-
-    if (!isClicking || !actionAllowed) {
-      return;
-    }
-
-    // console.log("isClick", position);
-
-    switch (mode) {
-      case "erase":
-        removeBox();
-        break;
-      case "fill":
-        // changeBoxColor();
-        break;
-      default:
-        break;
-    }
-
-    setActionAllowed(false);
-    setTimeout(() => {
-      setActionAllowed(true);
-    }, 300);
-  }, [
-    isClicking,
-    position,
-    mode,
-    actionAllowed,
-    removeBox,
-    movingBox.position,
-  ]); //changeBoxColor
-
-  const handlePointerMove = (e) => {
+  const handlePointerOver = (e) => {
     e.stopPropagation();
-    console.log("handlePointerMove", position);
+    console.log("handlePointerMove");
     switch (mode) {
       case "edit":
         const [x, y, z] = position;
@@ -81,11 +38,22 @@ export default function FixedBox({
     }
   };
 
-  const handlePointerDown = (e) => {
+  const handleClick = (e) => {
     console.log("down");
     e.stopPropagation();
-    if (["erase", "fill"].includes(mode) && e.button === 0) {
-      setClicking(true);
+    if (!["erase", "fill"].includes(mode) || e.button !== 0) {
+      return;
+    }
+
+    switch (mode) {
+      case "erase":
+        removeBox();
+        break;
+      case "fill":
+        changeBoxColor();
+        break;
+      default:
+        break;
     }
   };
 
@@ -94,8 +62,8 @@ export default function FixedBox({
       ref={mesh}
       scale={1}
       position={position}
-      onPointerMove={handlePointerMove}
-      onPointerDown={handlePointerDown}
+      onPointerOver={handlePointerOver}
+      onClick={handleClick}
     >
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color={color} />

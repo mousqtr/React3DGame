@@ -1,47 +1,13 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { Edges } from "@react-three/drei";
 
-export default function MovingBox({ addBox, position, color, mode, boxes }) {
+export default function MovingBox({ mode, position, color, addBox }) {
   const mesh = useRef();
-  const [isClicking, setClicking] = useState(false);
-  const [actionAllowed, setActionAllowed] = useState(true);
 
-  useEffect(() => {
-    if (mode !== "edit") {
-      return;
-    }
-
-    if (!isClicking || !actionAllowed) {
-      return;
-    }
-
-    // Check if there is already a box
-    const isBox = boxes.some((box) => {
-      if (JSON.stringify(box.position) === JSON.stringify(position)) {
-        return true;
-      }
-      return false;
-    });
-    if (isBox) return;
-    addBox(position);
-
-    setActionAllowed(false);
-    setTimeout(() => {
-      setActionAllowed(true);
-    }, 300);
-  }, [mode, isClicking, actionAllowed, addBox, position, boxes]);
-
-  const handlePointerDown = (e) => {
+  const handleClick = (e) => {
     e.stopPropagation();
     if (mode === "edit" && e.button === 0) {
-      setClicking(true);
-    }
-  };
-
-  const handlePointerUp = (e) => {
-    e.stopPropagation();
-    if (mode === "edit" && e.button === 0) {
-      setClicking(false);
+      addBox();
     }
   };
 
@@ -52,18 +18,12 @@ export default function MovingBox({ addBox, position, color, mode, boxes }) {
           mesh={mesh}
           position={position}
           color={color}
-          handlePointerDown={handlePointerDown}
-          handlePointerUp={handlePointerUp}
+          handleClick={handleClick}
         />
       );
     case "erase":
       return (
-        <EraseBox
-          mesh={mesh}
-          position={position}
-          handlePointerDown={handlePointerDown}
-          handlePointerUp={handlePointerUp}
-        />
+        <EraseBox mesh={mesh} position={position} handleClick={handleClick} />
       );
     case "fill":
       return (
@@ -71,8 +31,7 @@ export default function MovingBox({ addBox, position, color, mode, boxes }) {
           mesh={mesh}
           position={position}
           color={color}
-          handlePointerDown={handlePointerDown}
-          handlePointerUp={handlePointerUp}
+          handleClick={handleClick}
         />
       );
     default:
@@ -80,21 +39,9 @@ export default function MovingBox({ addBox, position, color, mode, boxes }) {
   }
 }
 
-function EditBox({
-  mesh,
-  position,
-  color,
-  handlePointerDown,
-  handlePointerUp,
-}) {
+function EditBox({ mesh, position, color, handleClick }) {
   return (
-    <mesh
-      ref={mesh}
-      scale={1}
-      position={position}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-    >
+    <mesh ref={mesh} scale={1} position={position} onClick={handleClick}>
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color={color} opacity={1} transparent={false} />
       <Edges scale={1} threshold={5} color={color} />
@@ -103,15 +50,9 @@ function EditBox({
   );
 }
 
-function EraseBox({ mesh, position, handlePointerDown, handlePointerUp }) {
+function EraseBox({ mesh, position, handleClick }) {
   return (
-    <mesh
-      ref={mesh}
-      scale={1}
-      position={position}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-    >
+    <mesh ref={mesh} scale={1} position={position} onClick={handleClick}>
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial
         toneMapped={false}
@@ -124,21 +65,9 @@ function EraseBox({ mesh, position, handlePointerDown, handlePointerUp }) {
   );
 }
 
-function FillBox({
-  mesh,
-  position,
-  color,
-  handlePointerDown,
-  handlePointerUp,
-}) {
+function FillBox({ mesh, position, color, handleClick }) {
   return (
-    <mesh
-      ref={mesh}
-      scale={1.1}
-      position={position}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-    >
+    <mesh ref={mesh} scale={1.1} position={position} onClick={handleClick}>
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial
         toneMapped={false}
